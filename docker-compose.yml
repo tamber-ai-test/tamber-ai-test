@@ -32,9 +32,11 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile.dev
-    container_name: tamber-api
+    container_name: tamber-api-dev
     ports:
       - "8080:8080"
+    volumes:
+      - ./api:/app  # required for live reload
     depends_on:
       - mongo
 
