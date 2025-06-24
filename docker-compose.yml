@@ -70,15 +70,15 @@ services:
     depends_on:
       - mongo
 
-  desktop:
+  web:
     build:
-      context: ./desktop
+      context: ./web
       dockerfile: Dockerfile.dev  # you may need to create this if it doesn't exist
-    container_name: tamber-desktop
+    container_name: tamber-web
     develop:
       watch:
         - action: sync
-          path: ./desktop
+          path: ./web
           target: /app
           ignore:
             - node_modules/
@@ -90,6 +90,7 @@ services:
       - NEXT_PUBLIC_API_ENDPOINT=http://api:8080
     depends_on:
       - api
+
 
 
 volumes:
