@@ -5,29 +5,30 @@ services:
       - "4566:4566"
       - "4510-4559:4510-4559"
     environment:
-      - SERVICES=cognito,cloudformation,sts,iam
+      - SERVICES=cognito,cloudformation,sts,iam,ssm
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./infra:/infra
 
-cdk:
-  build:
-    context: ./infra
-    dockerfile: Dockerfile.dev
-  depends_on:
-    - localstack
-  environment:
-    - AWS_REGION=us-east-1
-    - LOCALSTACK_HOST=localstack
-    - AWS_ENDPOINT_URL=http://localstack:4566
-  volumes:
-    - ./infra:/infra
-  working_dir: /infra
-  command: >
-    sh -c "cdklocal bootstrap &&
-           cdklocal deploy --require-approval never --context env=local"
+  cdk:
+    build:
+      context: ./infra
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - localstack
+    environment:
+      - AWS_REGION=us-east-1
+      - LOCALSTACK_HOST=localstack
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ENDPOINT_URL_S3=http://localstack:4566
+    volumes:
+      - ./infra:/infra
+    working_dir: /infra
+    command: >
+      sh -c "cdklocal bootstrap &&
+             cdklocal deploy --require-approval never --context env=local"
 
 
   mongo:
