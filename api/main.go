@@ -22,6 +22,7 @@ var mongoClient *mongo.Client
 var s3Client *s3.S3
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received upload request")
 	r.ParseMultipartForm(10 << 20) // 10MB limit
 
 	file, handler, err := r.FormFile("file")
@@ -69,6 +70,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	log.Println("Starting server...")
 	var err error
 	mongoClient, err = mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://root:example@mongo:27017"))
 	if err != nil {
@@ -80,12 +82,20 @@ func main() {
 		Endpoint:    aws.String("http://localstack:4566"),
 		Credentials: credentials.NewStaticCredentials("test", "test", ""),
 	})
+
 	if err != nil {
 		log.Fatal(err)
 	}
 	s3Client = s3.New(sess)
 
 	http.HandleFunc("/upload", uploadHandler)
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "Welcome to the MP3 Upload Service!")
+	})
+
 	http.ListenAndServe(":8080", nil)
+
+
 }
 
