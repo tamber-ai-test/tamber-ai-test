@@ -1,5 +1,5 @@
 # Use a Go version that satisfies your go.mod requirement
-FROM golang:1.23.3-alpine as builder
+FROM golang:1.23.3-alpine AS builder
 
 WORKDIR /app
 COPY . .
