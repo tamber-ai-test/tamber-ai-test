@@ -1,0 +1,12 @@
+FROM golang:1.21-bullseye
+
+RUN apt-get update && apt-get install -y git curl
+
+RUN go install github.com/cosmtrek/air@latest
+
+WORKDIR /app
+COPY . .
+
+EXPOSE 8080
+CMD ["air"]
+
