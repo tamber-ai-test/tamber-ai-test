@@ -75,10 +75,19 @@ services:
       context: ./desktop
       dockerfile: Dockerfile.dev  # you may need to create this if it doesn't exist
     container_name: tamber-desktop
+    develop:
+      watch:
+        - action: sync
+          path: ./desktop
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
     ports:
       - "3000:3000"
     environment:
-      - API_BASE_URL=http://api:8080
+      - NEXT_PUBLIC_API_ENDPOINT=http://api:8080
     depends_on:
       - api
 
