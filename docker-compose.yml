@@ -66,9 +66,16 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./api:/app  # required for live reload
+      - ./api:/app
     depends_on:
       - mongo
+    environment:
+      - MONGO_URI=mongodb://root:example@mongo:27017
+      - S3_ENDPOINT=http://localstack:4566
+      - S3_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - S3_BUCKET=my-mp3-bucket
 
   web:
     build:
