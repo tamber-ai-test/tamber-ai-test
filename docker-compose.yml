@@ -1,6 +1,29 @@
-version: '3.8'
-
 services:
+  localstack:
+    image: localstack/localstack:3
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - SERVICES=cognito,cloudformation,sts,iam
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./infra:/infra
+
+  cdk:
+    build:
+      context: ./infra
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - localstack
+    environment:
+      - CDK_DEPLOY_REGION=us-east-1
+      - CDK_DEPLOY_ACCOUNT=000000000000
+    command: >
+      sh -c "npx cdk bootstrap --context env=local &&
+             npx cdk deploy --require-approval never --context env=local"
 
   mongo:
     image: mongo:7

@@ -1,0 +1,8 @@
+FROM node:20
+
+WORKDIR /infra
+COPY . .
+
+RUN npm install -g aws-cdk
+RUN npm install
+
