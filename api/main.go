@@ -110,6 +110,7 @@ func main() {
 	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(s3Region),
 		Endpoint:    aws.String(s3Endpoint),
+		S3ForcePathStyle: aws.Bool(true), // <<=== Add this line
 		Credentials: credentials.NewStaticCredentials(s3Key, s3Secret, ""),
 	})
 	if err != nil {
@@ -118,6 +119,7 @@ func main() {
 	s3Client = s3.New(sess)
 
 	http.HandleFunc("/upload", withCORS(uploadHandler))
+
 	http.HandleFunc("/", withCORS(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Welcome to the MP3 Upload Service!")
 	}))
