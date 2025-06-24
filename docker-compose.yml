@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   mongo:
     image: mongo:7
     container_name: mongo
@@ -39,6 +40,19 @@ services:
       - ./api:/app  # required for live reload
     depends_on:
       - mongo
+
+  desktop:
+    build:
+      context: ./desktop
+      dockerfile: Dockerfile.dev  # you may need to create this if it doesn't exist
+    container_name: tamber-desktop
+    ports:
+      - "3000:3000"
+    environment:
+      - API_BASE_URL=http://api:8080
+    depends_on:
+      - api
+
 
 volumes:
   mongo-data:
