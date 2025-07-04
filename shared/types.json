@@ -9,7 +9,7 @@
       "type": "integer"
     },
     "name": {
-      "description": "The user's full name",
+      "description": "The user's mostly name",
       "type": "string"
     },
     "email": {
