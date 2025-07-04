@@ -30,7 +30,6 @@ services:
       sh -c "cdklocal bootstrap &&
              cdklocal deploy --require-approval never --context env=local"
 
-
   mongo:
     image: mongo:7
     container_name: mongo
@@ -50,11 +49,11 @@ services:
     ports:
       - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: root
-      ME_CONFIG_BASICAUTH_PASSWORD: example
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=example
+      - ME_CONFIG_MONGODB_URL=mongodb://root:example@mongo:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=root
+      - ME_CONFIG_BASICAUTH_PASSWORD=example
     depends_on:
       - mongo
 
@@ -80,7 +79,7 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: Dockerfile.dev  # you may need to create this if it doesn't exist
+      dockerfile: Dockerfile.dev
     container_name: tamber-web
     develop:
       watch:
@@ -98,7 +97,23 @@ services:
     depends_on:
       - api
 
-
+  type-compiler:
+    build:
+      context: .
+      dockerfile: Dockerfile.type-compiler
+    volumes:
+      - ./shared:/app/shared
+      - ./api:/app/api
+      - ./web:/app/web
+    command: >
+      sh -c "
+        while true; do
+          inotifywait -e modify /app/shared/types.json &&
+          echo 'types.json changed, regenerating types...' &&
+          /usr/local/bin/generate-go-types /app/shared/types.json > /app/api/types.go &&
+          node /usr/local/bin/generate-ts-types.js /app/shared/types.json /app/web/types.ts;
+        done
+      "
 
 volumes:
   mongo-data:
