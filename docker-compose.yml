@@ -109,9 +109,9 @@ services:
       sh -c "
         while true; do
           inotifywait -e modify /app/shared/types.json &&
-          echo 'types.json changed, regenerating types...' &&
-          /usr/local/bin/generate-go-types /app/shared/types.json > /app/api/types.go &&
-          node /usr/local/bin/generate-ts-types.js /app/shared/types.json /app/web/types.ts;
+          echo 'Regenerating types...' &&
+          quicktype --lang go --src /app/shared/types.json --out /app/api/types.go &&
+          npx json2ts -i /app/shared/types.json -o /app/web/types.ts;
         done
       "
 

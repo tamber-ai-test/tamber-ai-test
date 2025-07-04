@@ -1,17 +1,8 @@
 FROM node:18-alpine
 
-# Install Go and inotify-tools
 RUN apk add --no-cache go inotify-tools
 
-# Copy the generator scripts into the image
-COPY ts_type_generator.js /usr/local/bin/generate-ts-types.js
-COPY go_type_generator.go /usr/local/bin/generate-go-types.go
-
-# Make the Go script executable
-RUN go build -o /usr/local/bin/generate-go-types /usr/local/bin/generate-go-types.go
-
-# Install typescript and json-schema-to-typescript
-RUN npm install -g typescript json-schema-to-typescript
+RUN npm install -g typescript json-schema-to-typescript quicktype
 
 WORKDIR /app
 
